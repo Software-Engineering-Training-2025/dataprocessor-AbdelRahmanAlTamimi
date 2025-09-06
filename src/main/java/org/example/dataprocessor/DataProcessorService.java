@@ -1,13 +1,16 @@
 package org.example.dataprocessor;
 
+import org.example.dataprocessor.Analysis.AnalysisInterface;
+import org.example.dataprocessor.Cleaning.CleaningInterface;
+import org.example.dataprocessor.Output.OutputInterface;
 import org.example.dataprocessor.enums.AnalysisType;
 import org.example.dataprocessor.enums.CleaningType;
 import org.example.dataprocessor.enums.OutputType;
+import org.example.dataprocessor.factories.AnalysisFactory;
+import org.example.dataprocessor.factories.CleaningFactory;
+import org.example.dataprocessor.factories.OutputFactory;
 import org.example.dataprocessor.strategies.IOperationsStrategy;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
 import java.util.*;
 
 /**
@@ -31,20 +34,12 @@ public class DataProcessorService {
             OutputType outputType,
             List<Integer> data) throws Exception {
 
-        IOperationsStrategy cleaningStrategy =
-                OperationStrategy.createOperation(cleaningType);
-        List<Double> cleanedResult = (List<Double>) cleaningStrategy.operation(data, cleaningType);
+        CleaningInterface cleaner = CleaningFactory.cleaningStrategy(cleaningType);
+        AnalysisInterface analyser = AnalysisFactory.AnalysisStrategy(analysisType);
+        OutputInterface output = OutputFactory.outputStrategy(outputType);
+        Operation preProcessor = new Operation(cleaner,analyser,output);
 
-        IOperationsStrategy analysisStrategy =
-                OperationStrategy.createOperation(analysisType);
-        Double analysisResult = (Double) analysisStrategy.operation(cleanedResult, analysisType);
-
-        IOperationsStrategy outputStrategy =
-                OperationStrategy.createOperation(outputType);
-        outputStrategy.operation(analysisResult, outputType);
-
-        return analysisResult;
-
+        return preProcessor.output(preProcessor.analysis(preProcessor.clean(data)));
     }
 }
 

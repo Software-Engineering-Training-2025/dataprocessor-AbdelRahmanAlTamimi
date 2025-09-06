@@ -1,12 +1,16 @@
 package org.example.dataprocessor;
 
+import org.example.dataprocessor.Analysis.AnalysisInterface;
+import org.example.dataprocessor.Cleaning.CleaningInterface;
+import org.example.dataprocessor.Output.OutputInterface;
 import org.example.dataprocessor.enums.AnalysisType;
 import org.example.dataprocessor.enums.CleaningType;
 import org.example.dataprocessor.enums.OutputType;
+import org.example.dataprocessor.factories.AnalysisFactory;
+import org.example.dataprocessor.factories.CleaningFactory;
+import org.example.dataprocessor.factories.OutputFactory;
+import org.example.dataprocessor.strategies.IOperationsStrategy;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
 import java.util.*;
 
 /**
@@ -30,15 +34,12 @@ public class DataProcessorService {
             OutputType outputType,
             List<Integer> data) throws Exception {
 
-        // TODO: implement using the enums only (no long if/else ladders required,
-        // but minimal branching to select behavior by enum is acceptable in this task).
-        // Steps:
-        // 1) Copy & clean data according to cleaningType.
-        // 2) Analyze cleaned array according to analysisType.
-        // 3) Output according to outputType (console or target/result.txt).
-        // 4) Return the numeric result.
+        CleaningInterface cleaner = CleaningFactory.cleaningStrategy(cleaningType);
+        AnalysisInterface analyser = AnalysisFactory.AnalysisStrategy(analysisType);
+        OutputInterface output = OutputFactory.outputStrategy(outputType);
+        Operation preProcessor = new Operation(cleaner,analyser,output);
 
-        throw new UnsupportedOperationException("Student must implement process(...)");
+        return preProcessor.output(preProcessor.analysis(preProcessor.clean(data)));
     }
 }
 

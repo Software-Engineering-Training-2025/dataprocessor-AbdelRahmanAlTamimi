@@ -1,6 +1,5 @@
 package org.example.dataprocessor;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.example.dataprocessor.enums.AnalysisType;
 import org.example.dataprocessor.enums.CleaningType;
 import org.example.dataprocessor.enums.OutputType;
@@ -11,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class DataProcessorServiceTest {
 
